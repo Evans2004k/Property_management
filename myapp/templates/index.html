@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Harbor & Pine </title>
+  <meta name="description" content="Find a home, pay rent, and request repairs in one place.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #172b3a;
+      --ink-soft: #4a5e6b;
+      --paper: #f5f7f6;
+      --card: #ffffff;
+      --glass: #cfe3dd;
+      --brass: #9a6f1f;
+      --brass-bg: #f3e6c8;
+      --line: #d5ddda;
+      --ok: #1f6b4f;
+      --warn: #8a3b2a;
+      --radius: 6px;
+      --head: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+      --body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --ink: #e8efec; --ink-soft: #a9b9b3; --paper: #0f1a22; --card: #162531;
+        --glass: #234238; --brass: #e0b45a; --brass-bg: #3a2f17; --line: #2b3d4a;
+        --ok: #6fd1a5; --warn: #f0a08e;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 400 1rem/1.6 var(--body); }
+    h1, h2, h3 { font-family: var(--head); line-height: 1.1; margin: 0; letter-spacing: -0.02em; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid var(--brass); outline-offset: 2px; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 1.25rem; }
+    .skip { position: absolute; left: -999px; }
+    .skip:focus { left: 1rem; top: 1rem; background: var(--card); padding: .5rem 1rem; z-index: 10; }
+
+    /* Header */
+    header.site { border-bottom: 1px solid var(--line); background: var(--card); }
+    header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: .9rem; padding-bottom: .9rem; flex-wrap: wrap; }
+    .brand { font: 800 1.25rem var(--head); text-decoration: none; letter-spacing: -0.02em; }
+    nav ul { list-style: none; display: flex; gap: 1.4rem; margin: 0; padding: 0; flex-wrap: wrap; }
+    nav a { text-decoration: none; font-weight: 500; color: var(--ink-soft); }
+    nav a:hover { color: var(--ink); text-decoration: underline; }
+    .btn { display: inline-block; font: 600 1rem var(--body); padding: .7rem 1.2rem; border-radius: var(--radius); border: 2px solid var(--ink); background: var(--ink); color: var(--paper); text-decoration: none; cursor: pointer; }
+    .btn:hover { filter: brightness(1.15); }
+    .btn.ghost { background: transparent; color: var(--ink); }
+
+    .flash { background: var(--brass-bg); border-bottom: 1px solid var(--line); padding: .7rem 0; }
+
+    /* Hero: a lobby directory board */
+    .hero { padding: 3.5rem 0 3rem; }
+    .hero .wrap { display: grid; grid-template-columns: 1.1fr 1fr; gap: 3rem; align-items: center; }
+    .hero h1 { font-size: clamp(2.3rem, 5.5vw, 4rem); font-weight: 800; }
+    .hero p.lead { font-size: 1.15rem; color: var(--ink-soft); max-width: 46ch; margin: 1.2rem 0 1.8rem; }
+    .search { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: .6rem; align-items: end; max-width: 620px; }
+    label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .25rem; color: var(--ink-soft); }
+    input, select, textarea { width: 100%; font: inherit; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: .65rem .75rem; }
+    textarea { min-height: 110px; resize: vertical; }
+
+    .board { background: var(--ink); color: #eef4f1; border-radius: 10px; padding: 1.3rem 1.4rem 1rem; box-shadow: 0 0 0 6px var(--glass); }
+    .board h2 { font-size: 1rem; font-weight: 700; color: #cfe3dd; margin-bottom: .8rem; }
+    .board table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    .board th { text-align: left; font-weight: 500; font-size: .8rem; color: #9fb5ad; padding: .3rem 0; }
+    .board td { padding: .55rem 0; border-top: 1px solid rgba(255,255,255,.14); }
+    .board td:last-child, .board th:last-child { text-align: right; }
+    .board .tag { color: #f0cd85; font-weight: 600; }
+    .board .empty { padding: 1rem 0; color: #9fb5ad; }
+
+    /* Stats strip */
+    .stats { border-block: 1px solid var(--line); background: var(--card); }
+    .stats .wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; padding-top: 1.4rem; padding-bottom: 1.4rem; }
+    .stats strong { display: block; font: 800 1.9rem var(--head); }
+    .stats span { color: var(--ink-soft); font-size: .95rem; }
+
+    section { padding: 3.5rem 0; }
+    section > .wrap > h2 { font-size: clamp(1.7rem, 3.5vw, 2.4rem); margin-bottom: .6rem; }
+    .sub { color: var(--ink-soft); max-width: 60ch; margin: 0 0 2rem; }
+
+    /* Listings */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
+    .listing { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+    .listing .thumb { height: 130px; background: linear-gradient(135deg, var(--glass), var(--paper)); display: grid; place-items: center; font: 800 3rem var(--head); color: var(--ink); opacity: .85; }
+    .listing .body { padding: 1rem 1.1rem 1.2rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
+    .listing h3 { font-size: 1.2rem; }
+    .listing .addr { color: var(--ink-soft); font-size: .93rem; }
+    .listing .rent { font: 700 1.3rem var(--head); margin-top: auto; padding-top: .6rem; }
+    .listing .rent small { font: 400 .85rem var(--body); color: var(--ink-soft); }
+    .pill { align-self: flex-start; font-size: .8rem; font-weight: 600; padding: .15rem .6rem; border-radius: 99px; }
+    .pill.available { background: #dcefe6; color: var(--ok); }
+    .pill.leased { background: #f4ddd7; color: var(--warn); }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .pill.available, :root:not([data-theme="light"]) .pill.leased { background: var(--line); } }
+    .none { border: 2px dashed var(--line); border-radius: var(--radius); padding: 2rem; text-align: center; color: var(--ink-soft); }
+
+    /* Services */
+    .services { background: var(--card); border-block: 1px solid var(--line); }
+    .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; }
+    .cols h3 { font-size: 1.25rem; margin-bottom: .4rem; }
+    .cols p { margin: 0; color: var(--ink-soft); }
+
+    /* Forms */
+    .forms .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+    form.panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.5rem; display: grid; gap: .9rem; }
+    form.panel h3 { font-size: 1.35rem; }
+    form.panel p { margin: 0; color: var(--ink-soft); }
+
+    footer { background: var(--ink); color: #dbe6e1; padding: 2.5rem 0; }
+    footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
+    footer a { color: #f0cd85; }
+    footer p { margin: .2rem 0; }
+
+    @media (max-width: 860px) {
+      .hero .wrap, .forms .wrap { grid-template-columns: 1fr; }
+      .search { grid-template-columns: 1fr; }
+      .stats .wrap { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>  
+  <a class="skip" href="#listings">Skip to listings</a>
+
+  <header class="site">
+    <div class="wrap">
+
+      <nav aria-label="Main">
+        <ul>
+          <li><a href="#listings">Available homes</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#portal">Tenant portal</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <a class="btn ghost" href="/accounts/login/">Log in</a>
+    </div>
+  </header>
+
+  {% if messages %}
+  <div class="flash" role="status">
+    <div class="wrap">
+      {% for message in messages %}<p style="margin:0">{{ message }}</p>{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <main id="main">
+    <!-- Hero -->
+    <div class="hero">
+      <div class="wrap">
+        <div>
+          <h1>Find a home. Pay rent. Report a repair. All in one place.</h1>
+          <p class="lead">We manage apartments and houses for owners and tenants, with clear rent records and repairs that get answered within a day.</p>
+          <form class="search" action="/properties/" method="get" aria-label="Search properties">
+            <div>
+              <label for="q-city">City</label>
+              <input id="q-city" name="city" type="text" placeholder="Nairobi">
+            </div>
+            <div>
+              <label for="q-beds">Bedrooms</label>
+              <select id="q-beds" name="bedrooms">
+                <option value="">Any</option>
+
+              </select>
+            </div>
+            <div>
+              <label for="q-rent">Max rent</label>
+              <input id="q-rent" name="max_rent" type="number" min="0" step="50" placeholder="1500">
+            </div>
+            <button class="btn" type="submit">Search homes</button>
+          </form>
+        </div>
+
+        <aside class="board" aria-label="Units available now">
+          <h2>Available now</h2>
+          <table>
+            <thead><tr><th>Unit</th><th>Beds</th><th>Rent / month</th></tr></thead>
+            <tbody>
+              
+              <tr>
+                <td>{{ p.name }}</td>
+                <td>{{ p.bedrooms }}</td>
+                
+             
+              <tr><td colspan="3" class="empty">No units are open right now. Join the waitlist below.</td></tr>
+            
+            </tbody>
+          </table>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Stats -->
+   
+
+
+
+    <!-- Services -->
+    <section id="services" class="services">
+      <div class="wrap">
+        <h2>What we handle</h2>
+        <p class="sub">Tell us whether you own or rent, and we will show you where to start.</p>
+        <div class="cols">
+          <div>
+            <h3>For owners</h3>
+            <p>Tenant screening, lease signing, rent collection, and a monthly statement you can read in two minutes.</p>
+          </div>
+          <div>
+            <h3>For tenants</h3>
+            <p>Pay rent online, download your lease, and track every repair request from sent to done.</p>
+          </div>
+          <div>
+            <h3>Maintenance</h3>
+            <p>Vetted local technicians, photo updates on every job, and approval limits you set yourself.</p>
+          </div>
+          <div>
+            <h3>Inspections</h3>
+            <p>Move-in and move-out reports with dated photos, so deposits are settled on evidence.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Forms -->
+    <section id="portal" class="forms">
+      <div class="wrap">
+        <form class="panel" action="/maintenance/new/" method="post">
+          {{ csrf_input }}
+          <h3>Request a repair</h3>
+          <p>Describe the problem and we will reply with a visit time.</p>
+          <div>
+            <label for="m-unit">Your unit</label>
+            <input id="m-unit" name="unit" type="text" required placeholder="e.g. Pine Court 4B">
+          </div>
+          <div>
+            <label for="m-priority">How urgent is it?</label>
+            <select id="m-priority" name="priority">
+              <option value="low">Can wait a few days</option>
+              <option value="normal" selected>Needs attention this week</option>
+              <option value="urgent">Urgent: leak, no power, or unsafe</option>
+            </select>
+          </div>
+          <div>
+            <label for="m-desc">What is wrong?</label>
+            <textarea id="m-desc" name="description" required></textarea>
+          </div>
+          <button class="btn" type="submit">Send repair request</button>
+        </form>
+
+        <form class="panel" id="contact" action="/contact/" method="post">
+          {{ csrf_input }}
+          <h3>Talk to our team</h3>
+          <p>Interested in a viewing, or want us to manage your property?</p>
+          <div>
+            <label for="c-name">Full name</label>
+            <input id="c-name" name="name" type="text" required autocomplete="name">
+          </div>
+          <div>
+            <label for="c-email">Email</label>
+            <input id="c-email" name="email" type="email" required autocomplete="email">
+          </div>
+          <div>
+            <label for="c-msg">Message</label>
+            <textarea id="c-msg" name="message" required></textarea>
+          </div>
+          <button class="btn" type="submit">Send message</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div>
+       
+      </div>
+      <div>
+        <p><a href="mailto:hello@example.com">hello@example.com</a></p>
+        <p><a href="tel:+254700000000">+254 700 000 000</a></p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
